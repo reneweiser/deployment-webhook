@@ -1,0 +1,57 @@
+[
+  {
+    "id": "deploy",
+    "execute-command": "/scripts/deploy.sh",
+    "command-working-directory": "/scripts",
+    "response-message": "Deployment triggered successfully",
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "head_commit.id"
+      },
+      {
+        "source": "payload",
+        "name": "repository.full_name"
+      },
+      {
+        "source": "payload",
+        "name": "ref"
+      }
+    ],
+    "pass-environment-to-command": [
+      {
+        "envname": "WEBHOOK_SECRET"
+      },
+      {
+        "envname": "TARGET_REPO_PATH"
+      },
+      {
+        "envname": "TARGET_SERVICE_NAME"
+      }
+    ],
+    "trigger-rule": {
+      "and": [
+        {
+          "match": {
+            "type": "payload-hmac-sha256",
+            "secret": "$WEBHOOK_SECRET",
+            "parameter": {
+              "source": "header",
+              "name": "X-Hub-Signature-256"
+            }
+          }
+        },
+        {
+          "match": {
+            "type": "value",
+            "value": "refs/heads/main",
+            "parameter": {
+              "source": "payload",
+              "name": "ref"
+            }
+          }
+        }
+      ]
+    }
+  }
+]
