@@ -1,5 +1,7 @@
 # Environment variables
 .env
+hooks/hooks.json
+scripts/deploy.sh
 
 # Docker
 *.log

@@ -33,10 +33,18 @@ GitHub Push → Webhook Endpoint (Traefik) → adnanh/webhook → deploy.sh
 
 ### 1. Configuration
 
-Clone this repository and create your environment file:
+Clone this repository and create your configuration files from the examples:
 
 ```bash
+# Create environment file
 cp .env.example .env
+
+# Create hooks configuration
+cp hooks/example.hooks.json hooks/hooks.json
+
+# Create deployment script
+cp scripts/example.deploy.sh scripts/deploy.sh
+chmod +x scripts/deploy.sh
 ```
 
 Generate a webhook secret:
@@ -61,7 +69,7 @@ TARGET_REPO_PATH=/path/to/your/application
 TARGET_SERVICE_NAME=your_service_name
 ```
 
-Edit `hooks/hooks.json`:
+Edit `hooks/hooks.json` to use your webhook secret:
 
 ```diff
            "match": {
@@ -122,9 +130,11 @@ deployment-webhook/
 ├── Dockerfile                    # Custom webhook image with Docker CLI
 ├── docker-compose.yml           # Webhook service with Traefik labels
 ├── hooks/
-│   └── hooks.json              # Webhook configuration
+│   ├── example.hooks.json      # Example webhook configuration (copy to hooks.json)
+│   └── hooks.json              # Your webhook configuration (create from example)
 ├── scripts/
-│   └── deploy.sh               # Deployment script
+│   ├── example.deploy.sh       # Example deployment script (copy to deploy.sh)
+│   └── deploy.sh               # Your deployment script (create from example)
 ├── .env.example                # Environment variables template
 ├── .gitignore                  # Git ignore rules
 └── README.md                   # This file
@@ -134,7 +144,7 @@ deployment-webhook/
 
 ### Branch Filtering
 
-By default, the webhook only triggers on pushes to the `main` branch. To change this, edit `hooks/hooks.json`:
+By default, the webhook only triggers on pushes to the `main` branch. To change this, edit your `hooks/hooks.json` file:
 
 ```json
 {
@@ -151,7 +161,7 @@ By default, the webhook only triggers on pushes to the `main` branch. To change 
 
 ### Custom Deployment Script
 
-The `scripts/deploy.sh` file contains the deployment logic. Customize it for your needs:
+Create your deployment script from the example (`cp scripts/example.deploy.sh scripts/deploy.sh`) and customize it for your needs:
 
 - Change the git branch in `git pull origin main`
 - Add pre/post deployment hooks
@@ -199,8 +209,8 @@ The default configuration allows 10 requests per second with a burst of 20. Adju
 - **Solution**: Verify `WEBHOOK_SECRET` in `.env` matches GitHub webhook secret
 
 **Deployment not triggering**
-- **Cause**: Wrong branch filter
-- **Solution**: Check `hooks/hooks.json` - ensure `refs/heads/main` matches your branch
+- **Cause**: Configuration files not created or wrong branch filter
+- **Solution**: Ensure you've created `hooks/hooks.json` and `scripts/deploy.sh` from the examples. Check that `refs/heads/main` matches your branch
 
 **Git pull fails**
 - **Cause**: Authentication issues
