@@ -61,6 +61,16 @@ TARGET_REPO_PATH=/path/to/your/application
 TARGET_SERVICE_NAME=your_service_name
 ```
 
+Edit `hooks/hooks.json`:
+
+```diff
+           "match": {
+             "type": "payload-hmac-sha256",
+-            "secret": "$WEBHOOK_SECRET",
++            "secret": "YOUR_SECRET",
+             "parameter": {
+```
+
 ### 2. Deploy the Webhook Service
 
 Build and start the webhook container:

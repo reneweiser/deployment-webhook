@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   webhook:
     build: .
@@ -38,8 +36,8 @@ services:
       - "traefik.http.routers.webhook.middlewares=webhook-ratelimit"
     
     networks:
-      - ${TRAEFIK_NETWORK}
+      - traefik-public
 
 networks:
-  ${TRAEFIK_NETWORK}:
+  traefik-public:
     external: true
