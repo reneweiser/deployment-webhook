@@ -1,14 +1,17 @@
 services:
   webhook:
-    build: .
+    build:
+      context: .
+      args:
+        DOCKER_GID: ${DOCKER_GID:-999}
     container_name: deployment-webhook
     restart: unless-stopped
-    
+
     environment:
       - WEBHOOK_SECRET=${WEBHOOK_SECRET}
       - TARGET_REPO_PATH=${TARGET_REPO_PATH}
       - TARGET_SERVICE_NAME=${TARGET_SERVICE_NAME}
-    
+
     volumes:
       # Docker socket for container management
       - /var/run/docker.sock:/var/run/docker.sock
@@ -18,26 +21,10 @@ services:
       - ./scripts:/scripts:ro
       # Mount target application directory (read-write for git pull)
       - ${TARGET_REPO_PATH}:${TARGET_REPO_PATH}
-    
-    command: ["-hooks=/etc/webhook/hooks.json", "-hotreload", "-verbose"]
-    
-    labels:
-      - "traefik.enable=true"
-      # Router configuration
-      - "traefik.http.routers.webhook.rule=Host(`${WEBHOOK_DOMAIN}`)"
-      - "traefik.http.routers.webhook.entrypoints=websecure"
-      - "traefik.http.routers.webhook.tls=true"
-      - "traefik.http.routers.webhook.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
-      # Service configuration
-      - "traefik.http.services.webhook.loadbalancer.server.port=9000"
-      # Optional: Rate limiting middleware
-      - "traefik.http.middlewares.webhook-ratelimit.ratelimit.average=10"
-      - "traefik.http.middlewares.webhook-ratelimit.ratelimit.burst=20"
-      - "traefik.http.routers.webhook.middlewares=webhook-ratelimit"
-    
-    networks:
-      - traefik-public
+      # Persistent deployment logs
+      - deploy-logs:/var/log/deployments
 
-networks:
-  traefik-public:
-    external: true
+    command: ["-hooks=/etc/webhook/hooks.json", "-hotreload", "-verbose"]
+
+volumes:
+  deploy-logs:

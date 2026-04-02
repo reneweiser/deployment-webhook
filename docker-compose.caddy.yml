@@ -1,0 +1,13 @@
+services:
+  webhook:
+    labels:
+      caddy: ${WEBHOOK_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 9000}}"
+
+    networks:
+      - caddy
+
+networks:
+  caddy:
+    name: ${CADDY_NETWORK:-caddy}
+    external: true

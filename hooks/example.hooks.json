@@ -42,6 +42,7 @@
           }
         },
         {
+          "comment": "Branch filter: change 'refs/heads/main' to match your target branch. This value does NOT support environment variable interpolation — you must edit it manually.",
           "match": {
             "type": "value",
             "value": "refs/heads/main",

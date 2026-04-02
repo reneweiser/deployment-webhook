@@ -2,6 +2,7 @@
 .env
 hooks/hooks.json
 scripts/deploy.sh
+docker-compose.override.yml
 
 # Docker
 *.log

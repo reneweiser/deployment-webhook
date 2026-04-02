@@ -1,0 +1,23 @@
+services:
+  webhook:
+    labels:
+      - "traefik.enable=true"
+      # Router configuration
+      - "traefik.http.routers.webhook.rule=Host(`${WEBHOOK_DOMAIN}`)"
+      - "traefik.http.routers.webhook.entrypoints=websecure"
+      - "traefik.http.routers.webhook.tls=true"
+      - "traefik.http.routers.webhook.tls.certresolver=${TRAEFIK_CERT_RESOLVER}"
+      # Service configuration
+      - "traefik.http.services.webhook.loadbalancer.server.port=9000"
+      # Rate limiting middleware
+      - "traefik.http.middlewares.webhook-ratelimit.ratelimit.average=10"
+      - "traefik.http.middlewares.webhook-ratelimit.ratelimit.burst=20"
+      - "traefik.http.routers.webhook.middlewares=webhook-ratelimit"
+
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    name: ${TRAEFIK_NETWORK:-traefik-public}
+    external: true
